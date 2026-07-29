@@ -12,6 +12,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LogOut, Settings, User as UserIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { NotificationsDropdown } from "./notifications-dropdown";
 
 export function NavClient({ user }: { user: any }) {
   const pathname = usePathname();
@@ -25,11 +26,12 @@ export function NavClient({ user }: { user: any }) {
   };
 
   const navLinks = [
+    { href: "/feed", label: "Lenta", icon: Sparkles },
     { href: "/ai-tools", label: "Tools", icon: Library },
     { href: "/prompts", label: "Prompts", icon: Sparkles },
     { href: "/debug", label: "Debug", icon: Code2 },
-    { href: "/community", label: "Community", icon: Users },
     { href: "/jobs", label: "Jobs", icon: Briefcase },
+    { href: "/community", label: "Community", icon: Users },
   ];
 
   return (
@@ -39,7 +41,7 @@ export function NavClient({ user }: { user: any }) {
         <header className="flex w-full max-w-6xl items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center space-x-2 group text-foreground">
-              <div className="h-7 w-7 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-sm shadow-sm glow-shadow">
+              <div className="h-7 w-7 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center font-bold text-sm shadow-sm glow-shadow">
                 A
               </div>
               <span className="font-semibold text-sm tracking-tight hidden lg:inline-block">aidevs</span>
@@ -68,6 +70,7 @@ export function NavClient({ user }: { user: any }) {
           
           <div className="flex items-center gap-3">
             <ThemeToggle />
+            {user && <NotificationsDropdown user={user} />}
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer outline-none">
@@ -126,12 +129,13 @@ export function NavClient({ user }: { user: any }) {
       {/* Mobile Top Header (Minimal) */}
       <div className="md:hidden fixed top-0 inset-x-0 h-14 z-50 flex items-center justify-between px-4 bg-background/60 backdrop-blur-xl border-b border-border/40">
         <Link href="/" className="flex items-center space-x-2 text-foreground">
-          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-sm shadow-sm glow-shadow">
+          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center font-bold text-sm shadow-sm glow-shadow">
             A
           </div>
         </Link>
         <div className="flex items-center gap-3">
           <ThemeToggle />
+          {user && <NotificationsDropdown user={user} />}
           {user ? (
             <Link href="/profile/edit">
               <Avatar className="h-8 w-8 rounded-full border-2 border-border/50 shadow-sm">

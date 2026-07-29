@@ -11,8 +11,7 @@ export default function Home() {
     <div className="flex min-h-screen flex-col overflow-hidden relative selection:bg-primary/30">
       
       {/* Background glow effects */}
-      <div className="absolute top-0 -left-40 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] opacity-50 pointer-events-none" />
-      <div className="absolute top-40 -right-40 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px] opacity-50 pointer-events-none" />
+      <div className="absolute top-0 -left-40 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] opacity-40 pointer-events-none" />
 
       {/* HERO SECTION - Premium, stunning, deep contrast */}
       <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-4 z-10">
@@ -21,7 +20,7 @@ export default function Home() {
         <div className="container max-w-5xl mx-auto text-center flex flex-col items-center">
           
           <div className="inline-flex items-center rounded-full border border-border/50 bg-background/50 backdrop-blur-xl px-4 py-1.5 text-sm font-medium text-muted-foreground mb-8 shadow-sm hover:border-primary/30 transition-colors cursor-default premium-border">
-            <span className="flex h-2 w-2 rounded-full bg-primary mr-2 shadow-[0_0_8px_rgba(99,102,241,0.8)] animate-pulse" />
+            <span className="flex h-2 w-2 rounded-full bg-primary mr-2 shadow-[0_0_8px_rgba(245,158,11,0.8)] animate-pulse" />
             <span className="text-foreground/80">aidevs.uz — yangi avlod platformasi</span>
           </div>
           
@@ -77,8 +76,8 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 auto-rows-fr">
           
           <div className="glass-card p-8 rounded-3xl premium-border flex flex-col group hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:bg-card/90 transition-all duration-500">
-            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center mb-8 border border-indigo-500/20 group-hover:scale-110 transition-transform duration-500">
-              <Database className="h-6 w-6 text-indigo-400" />
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center mb-8 border border-amber-500/20 group-hover:scale-110 transition-transform duration-500">
+              <Database className="h-6 w-6 text-amber-400" />
             </div>
             <h3 className="text-2xl font-bold mb-4 tracking-tight">AI Promptlar</h3>
             <p className="text-muted-foreground text-base leading-relaxed mb-8 flex-1">Kodingizni avtomatlashtirish, test yozish va xatolarni topish uchun tayyor va sinalgan promptlarni ishlating.</p>

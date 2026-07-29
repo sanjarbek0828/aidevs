@@ -19,7 +19,7 @@ const badgeVariants = cva(
         ghost:
           "hover:bg-accent/50 hover:text-accent-foreground dark:hover:bg-white/5",
         premium:
-          "bg-gradient-to-r from-primary/20 to-indigo-500/20 text-primary border border-primary/30 backdrop-blur-md shadow-[0_0_12px_rgba(99,102,241,0.2)]",
+          "bg-gradient-to-r from-primary/20 to-orange-500/20 text-primary border border-primary/30 backdrop-blur-md shadow-[0_0_12px_rgba(245,158,11,0.2)]",
         link: "text-primary underline-offset-4 hover:underline",
       },
     },

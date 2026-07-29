@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { FollowButton } from "@/components/profile/follow-button";
 
 export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params;
@@ -26,6 +27,12 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
 
   const { data: { user } } = await supabase.auth.getUser();
   const isOwnProfile = user?.id === profile.id;
+
+  const [{ count: followersCount }, { count: followingCount }, { count: postsCount }] = await Promise.all([
+    supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', profile.id),
+    supabase.from('follows').select('*', { count: 'exact', head: true }).eq('follower_id', profile.id),
+    supabase.from('posts').select('*', { count: 'exact', head: true }).eq('author_id', profile.id)
+  ]);
 
   const joinDate = new Date(profile.created_at).toLocaleDateString('uz-UZ', { year: 'numeric', month: 'long' });
 
@@ -46,6 +53,11 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
               <div className="flex flex-col items-center lg:items-start space-y-1 w-full text-center lg:text-left">
                 <h1 className="text-2xl font-bold text-foreground">{profile.full_name || username}</h1>
                 <p className="text-muted-foreground text-sm font-medium">@{username}</p>
+                <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
+                  <div><span className="font-bold text-foreground">{followersCount || 0}</span> obunachilar</div>
+                  <div><span className="font-bold text-foreground">{followingCount || 0}</span> obunalar</div>
+                  <div><span className="font-bold text-foreground">{postsCount || 0}</span> postlar</div>
+                </div>
               </div>
               
               {profile.bio && (
@@ -92,12 +104,12 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
               <div className="flex w-full pt-4">
                 {isOwnProfile ? (
                   <Link href="/profile/edit" className="w-full">
-                    <Button className="w-full rounded-lg bg-card hover:bg-accent border-border text-foreground font-medium" variant="outline">
+                    <Button className="w-full rounded-full bg-card hover:bg-accent border-border text-foreground font-medium" variant="outline">
                       <Edit className="h-4 w-4 mr-2" /> Profilni tahrirlash
                     </Button>
                   </Link>
                 ) : (
-                  <Button className="w-full rounded-lg font-medium" variant="default">Kuzatish</Button>
+                  <FollowButton targetUserId={profile.id} currentUser={user} />
                 )}
               </div>
             </div>

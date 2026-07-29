@@ -9,8 +9,19 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "aidevs.uz",
-  description: "O'zbekiston dasturchilari uchun yagona ekotizim",
+  title: {
+    default: "aidevs.uz | O'zbekiston Dasturchilari Ekotizimi",
+    template: "%s | aidevs.uz"
+  },
+  description: "O'zbekiston dasturchilari uchun yagona ekotizim. Sun'iy intellekt vositalari, postlar, savol-javoblar va ish o'rinlari.",
+  openGraph: {
+    title: "aidevs.uz | O'zbekiston Dasturchilari",
+    description: "Dasturlash, AI vositalari, tayyor promptlar, tezkor xatolarni izlash va kuchli jamoa.",
+    url: "https://aidevs.uz",
+    siteName: "aidevs.uz",
+    locale: "uz_UZ",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

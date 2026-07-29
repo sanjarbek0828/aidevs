@@ -228,12 +228,104 @@ ON public.issue_answers FOR UPDATE USING (auth.uid() = author_id);
 
 
 -- ==========================================
--- 9. ENABLE REALTIME FOR MESSAGES
+-- 9. POST LIKES TABLE
+-- ==========================================
+CREATE TABLE IF NOT EXISTS public.post_likes (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    post_id UUID REFERENCES public.posts(id) ON DELETE CASCADE NOT NULL,
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(post_id, user_id)
+);
+
+ALTER TABLE public.post_likes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Post likes are viewable by everyone." 
+ON public.post_likes FOR SELECT USING (true);
+
+CREATE POLICY "Authenticated users can insert post likes." 
+ON public.post_likes FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own post likes." 
+ON public.post_likes FOR DELETE USING (auth.uid() = user_id);
+
+-- ==========================================
+-- 10. POST COMMENTS TABLE
+-- ==========================================
+CREATE TABLE IF NOT EXISTS public.post_comments (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    post_id UUID REFERENCES public.posts(id) ON DELETE CASCADE NOT NULL,
+    author_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.post_comments ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Post comments are viewable by everyone." 
+ON public.post_comments FOR SELECT USING (true);
+
+CREATE POLICY "Authenticated users can insert post comments." 
+ON public.post_comments FOR INSERT WITH CHECK (auth.uid() = author_id);
+
+CREATE POLICY "Users can update own post comments." 
+ON public.post_comments FOR UPDATE USING (auth.uid() = author_id);
+
+CREATE POLICY "Users can delete own post comments." 
+ON public.post_comments FOR DELETE USING (auth.uid() = author_id);
+
+-- ==========================================
+-- 11. NOTIFICATIONS TABLE
+-- ==========================================
+CREATE TABLE IF NOT EXISTS public.notifications (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    actor_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    type TEXT NOT NULL, -- like, comment, answer, follow
+    entity_id UUID, -- post_id, issue_id, etc.
+    is_read BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own notifications." 
+ON public.notifications FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "System can insert notifications." 
+ON public.notifications FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Users can update own notifications." 
+ON public.notifications FOR UPDATE USING (auth.uid() = user_id);
+
+-- ==========================================
+-- 12. FOLLOWS TABLE
+-- ==========================================
+CREATE TABLE IF NOT EXISTS public.follows (
+    follower_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    following_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    PRIMARY KEY (follower_id, following_id)
+);
+
+ALTER TABLE public.follows ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Follows are viewable by everyone." 
+ON public.follows FOR SELECT USING (true);
+
+CREATE POLICY "Authenticated users can follow." 
+ON public.follows FOR INSERT WITH CHECK (auth.uid() = follower_id);
+
+CREATE POLICY "Users can unfollow." 
+ON public.follows FOR DELETE USING (auth.uid() = follower_id);
+
+-- ==========================================
+-- 13. ENABLE REALTIME
 -- ==========================================
 -- Supabase needs publication to track realtime changes
--- Enable logical replication for messages table
 BEGIN;
   DROP PUBLICATION IF EXISTS supabase_realtime;
   CREATE PUBLICATION supabase_realtime;
 COMMIT;
-ALTER PUBLICATION supabase_realtime ADD TABLE messages;
+ALTER PUBLICATION supabase_realtime ADD TABLE messages, jobs, issues, issue_answers, posts, post_likes, post_comments, notifications;
+
